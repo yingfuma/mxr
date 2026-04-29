@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温暖鼓励</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 45px 35px;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.18);
+            max-width: 380px;
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,107,107,0.05), rgba(252,182,159,0.05));
+            transform: rotate(45deg);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            animation: bounce 2.5s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .quote {
+            font-size: 19px;
+            line-height: 1.9;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            min-height: 110px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 40px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(238,90,90,0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(238,90,90,0.45);
+        }
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+        .footer {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+            text-align: center;
+        }
+        .sparkles {
+            position: fixed;
+            font-size: 28px;
+            animation: float 3.5s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-20px) rotate(15deg); opacity: 1; }
+        }
+        .counter {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <span class="sparkles" style="top:8%;left:8%">✨</span>
+    <span class="sparkles" style="top:15%;right:12%;animation-delay:0.4s">🌟</span>
+    <span class="sparkles" style="bottom:25%;left:15%;animation-delay:0.8s">💫</span>
+    <span class="sparkles" style="bottom:15%;right:8%;animation-delay:1.2s">⭐</span>
+    <span class="sparkles" style="top:30%;left:5%;animation-delay:1.6s">🌙</span>
+    <span class="sparkles" style="bottom:40%;right:18%;animation-delay:2s">🌈</span>
+    
+    <div class="card">
+        <div class="icon" id="icon">💪</div>
+        <p class="quote" id="quote">准备好接收今日的力量了吗？</p>
+        <button class="btn btn-primary" id="newQuote">获取新鼓励</button>
+        <p class="counter">已获取 <span id="count">0</span> 次鼓励</p>
+    </div>
+    <p class="footer">触碰NFC标签 · 获取温暖力量 ✨</p>
+    
+    <script>
+        // 150条励志语句
+        const quotes = [
+            '路虽远，行则将至；事虽难，做则必成。',
+            '半山腰太挤，总要去山顶看一看。',
+            '你只管努力，时间自有答案。',
+            '生活原本沉闷，跑起来就有风。',
+            '乾坤未定，你我皆是黑马。',
+            '熬过无人问津，方能拥抱诗和远方。',
+            '发光不必借太阳，你自己也可以。',
+            '低头是题海，抬头是前程。',
+            '悄悄努力，然后惊艳所有人。',
+            '放弃很容易，但坚持一定很酷。',
+            '人生没有白走的路，每一步都算数。',
+            '心若向阳，何惧风霜。',
+            '努力的意义，是拥有选择的底气。',
+            '所有逆袭，都是日积月累的沉淀。',
+            '稳住心态，慢慢沉淀，静待花开。',
+            '不必借光，你我皆是星辰。',
+            '低谷不气馁，高处不张扬。',
+            '当下偷的懒，都是未来路上的坎。',
+            '以梦为马，不负韶华。',
+            '热爱可抵岁月漫长，坚持可渡世事无常。',
+            '把情绪静音，把努力加满。',
+            '最好的贵人，永远是拼命的自己。',
+            '慢慢来，谁都有低谷和迷茫。',
+            '眼里有光，心中有梦，脚下有路。',
+            '凡是过往，皆为序章；凡是未来，皆有可期。',
+            '自律的高度，决定人生的高度。',
+            '风雨里做大人，阳光下做孩子。',
+            '所有光鲜背后，都是默默咬牙坚持。',
+            '不为模糊未来焦虑，只为当下全力以赴。',
+            '平凡日子，也要活得热气腾腾。',
+            '前路浩浩荡荡，万事皆可期待。',
+            '与其抱怨黑暗，不如提灯前行。',
+            '余生很贵，别浪费在内耗和纠结里。',
+            '每一次坚持，都在铺垫往后的惊喜。',
+            '不负时光，不负自己，不负热爱。',
+            '日子可以重复，人生不能原地踏步。',
+            '把委屈藏心底，把努力放眼里。',
+            '优秀从不是天赋，是日复一日自律。',
+            '心有光芒，不惧路远漫长。',
+            '别停下脚步，前方自有好风景。',
+            '熬过低谷繁华自现，熬过黑夜自有黎明。',
+            '踏实走好每一步，余生步步生花。',
+            '与其羡慕别人，不如修炼自己。',
+            '不慌不忙，慢慢发光，慢慢变强。',
+            '专注自身成长，其余顺其自然。',
+            '路的尽头还是路，只要你愿意往前走。',
+            '与其原地徘徊，不如即刻出发。',
+            '把所有不甘，都变成前行的动力。',
+            '熬过当下的苦，方能尝到往后的甜。',
+            '不随波逐流，不敷衍生活，不辜负此生。',
+            '所有好运，都藏在日复一日的努力里。',
+            '别怕平凡，坚持自有属于你的荣光。',
+            '稳住节奏，默默蓄力，终会逆风翻盘。',
+            '未来可期，人间值得，当下不负。',
+            '你流下的每一滴汗水，都不会被辜负。',
+            '生活再难，也要昂首挺胸往前走。',
+            '收起矫情，踏实做事，安静成长。',
+            '时光不负有心人，岁月不负赶路人。',
+            '与其空想万千，不如行动一次。',
+            '风雨过后皆是晴朗，努力过后皆有收获。',
+            '做自己的太阳，无需借任何人的光。',
+            '走得慢没关系，只要从不后退。',
+            '保持热爱，奔赴山海，忠于本心。',
+            '不停止成长，不放弃热爱，不辜负时光。',
+            '少年自有凌云志，敢乘长风破万浪。',
+            '熬过迷茫期，守住初心，终有回甘。',
+            '心中有目标，脚下不停步，终能抵远方。',
+            '平凡的人，也能靠努力活出不凡。',
+            '别让犹豫，耽误本该发光的自己。',
+            '吃苦要趁年少，努力要趁当下。',
+            '越努力越幸运，越自律越自由。',
+            '人生没有捷径，踏实才是唯一坦途。',
+            '深耕自己，沉淀自己，成就自己。',
+            '生活最好的状态：自愈、自律、自渡。',
+            '不恋过往，不忧将来，只安当下。',
+            '今天的付出，是明天最大的底气。',
+            '你若盛开，清风自来；你若努力，好运自来。',
+            '只管全力以赴，剩下交给时间。',
+            '不为一时失意消沉，只为一生前程奋进。',
+            '人生贵在坚持，成败贵在恒心。',
+            '与其仰望别人，不如丰盈自己。',
+            '把平凡的每一天，都过成向上的一天。',
+            '所有熬过的夜，都会变成照亮前路的光。',
+            '静下心沉淀，沉下心努力。',
+            '别怕起点太低，只怕原地踏步。',
+            '心中有山海，眼里藏星河。',
+            '不负每一个清晨，不负每一次拼搏。',
+            '努力不是为了感动谁，只是为了成全自己。',
+            '低谷时沉淀，高峰时沉淀。',
+            '每一次跌倒，都是为了更高的起飞。',
+            '人生一半努力，一半坚持。',
+            '不急于求成，不半途而废。',
+            '慢慢来是诚意，坚持住是勇气。',
+            '熬过世俗喧嚣，守住内心宁静。',
+            '以渺小启程，以圆满落幕。',
+            '越自律，越优秀；越坚持，越幸运。',
+            '别将就当下，别辜负余生。',
+            '心定路自稳，人勤路自宽。',
+            '但凡辛苦，皆是礼物。',
+            '所有难熬的日子，终会化作成长的勋章。',
+            '追风赶月莫停留，平芜尽处是春山。',
+            '愿你历尽千帆，归来仍是少年。',
+            '前路漫漫亦灿灿，往事堪堪亦澜澜。',
+            '保持清醒，保持自律，保持上进。',
+            '不做口头巨人，只做行动强者。',
+            '日子有苦有甜，人生有起有落。',
+            '稳住情绪，稳住心态，稳住人生。',
+            '你现在的努力，决定未来遇见的人。',
+            '别辜负野心，别浪费天赋。',
+            '与其纠结过往，不如奔赴未来。',
+            '半山腰的风景再好，也不及顶峰辽阔。',
+            '默默扎根，悄悄开花，惊艳时光。',
+            '人生最好的状态：不卑不亢，向阳生长。',
+            '熬过无人理解的日子，才能拥有随心所欲的人生。',
+            '心无杂念，全力以赴，自有归途。',
+            '不必和别人比，只和昨天的自己比。',
+            '一点点变好，就是最好的状态。',
+            '生活给你压力，你就还它奇迹。',
+            '把目标藏心里，把努力放行动里。',
+            '不抱怨环境，只提升自己。',
+            '凡是杀不死你的，终将使你更加强大。',
+            '愿你眼里有星辰，心中有山海。',
+            '坚持不是硬扛，是从不轻易放弃。',
+            '不负韶华，不负梦想，不负自己。',
+            '所有光芒万丈，都源于默默守望。',
+            '别在最好的年纪，选择安逸度日。',
+            '人生没有白熬的夜，没有白流的汗。',
+            '一步一脚印，一岁一成长。',
+            '心有定力，方能行稳致远。',
+            '接纳不完美，然后拼命变优秀。',
+            '岁月不语，却回答所有努力。',
+            '不为一时得失，困住一生前程。',
+            '向阳而生，逆风翻盘。',
+            '安静努力，低调优秀，慢慢发光。',
+            '路难走也要走，梦难做也要追。',
+            '平凡的生活，也能活出滚烫的人生。',
+            '把浮躁放下，把沉静拾起。',
+            '越沉淀，越通透；越努力，越从容。',
+            '愿所有坚持，都能换来如愿以偿。',
+            '不负每一次早起，不负每一次坚持。',
+            '你若足够优秀，万事皆有退路。',
+            '人生下半场，拼的是自律和心态。',
+            '不羡慕谁，不嘲笑谁，默默努力做自己。',
+            '风雨人生路，坚持是唯一底气。',
+            '心怀期许，脚踏实地，一路生花。',
+            '别让拖延，毁掉本该闪闪发光的你。',
+            '凡是尽力而为，皆是不留遗憾。',
+            '保持初心，奔赴热爱，永不言弃。',
+            '当下每一分努力，都在为未来铺路。',
+            '此生只管向上，其余自有安排。'
+        ];
+        
+        const icons = ['💪', '🌟', '🌈', '🌸', '💝', '❤️', '☀️', '🎈', '✨', '💖', '🌺', '🌻', '🦋', '🌙', '⭐', '🔥', '⚡', '💫', '🎯', '🏆'];
+        
+        let count = 0;
+        
+        function getRandomQuote() {
+            // 随机选择励志语
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            const quote = quotes[randomIndex];
+            
+            // 随机选择图标
+            const iconIndex = Math.floor(Math.random() * icons.length);
+            const icon = icons[iconIndex];
+            
+            // 更新显示
+            document.getElementById('quote').textContent = quote;
+            document.getElementById('icon').textContent = icon;
+            
+            // 更新计数
+            count++;
+            document.getElementById('count').textContent = count;
+            
+            // 添加动画效果
+            const card = document.querySelector('.card');
+            card.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+            }, 100);
+        }
+        
+        // 页面加载时显示第一条励志语
+        getRandomQuote();
+        
+        // 点击按钮获取新励志语
+        document.getElementById('newQuote').addEventListener('click', getRandomQuote);
+        
+        // 支持键盘空格键获取新励志语
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                getRandomQuote();
+            }
+        });
+    </script>
+</body>
+</html>
